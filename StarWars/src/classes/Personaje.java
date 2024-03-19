@@ -65,8 +65,10 @@ public class Personaje {
     public String toString() {
         return "Personaje de StarWars{" +
                 "nombre='" + name + '\'' +
+                ", género='" + gender + '\'' +
                 ", altura='" + height + '\'' +
                 ", peso='" + mass + '\'' +
+                ", año de nacimiento='" + birth_year + '\'' +
                 '}';
     }
 }
