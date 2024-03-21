@@ -15,38 +15,78 @@ import java.util.logging.Logger;
  * @author Miguel Matul <https://github.com/MigueMat4>
  */
 public class frmMain extends javax.swing.JFrame {
-    
-    Personaje sw_personaje; // personaje que se descargará de la API
-    ConectorAPI buscador = new ConectorAPI(); // clase que conecta a la API
-    
+
+    public class HiloReloj extends Thread {
+
+        Reloj reloj = new Reloj();
+
+        public void HiloReloj() {
+            this.reloj = new Reloj();
+        }
+
+        @Override
+        public void run() {
+            this.reloj.mostrarHora();
+        }
+    }
+
+    public class HiloAPI extends Thread {
+
+        Personaje sw_personaje; // personaje que se descargará de la API
+        ConectorAPI buscador = new ConectorAPI(); // clase que conecta a la API;
+
+        public void HiloAPI() {
+            this.buscador = new ConectorAPI();
+        }
+
+        @Override
+        public void run() {
+            try {
+                this.sw_personaje = this.buscador.buscarPersonaje();
+                txtPersonaje.setText(sw_personaje.getName());
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     /**
      * Creates new form frmMain
      */
     public frmMain() {
         initComponents();
+
+        HiloReloj hilo_reloj = new HiloReloj();
+        hilo_reloj.start();
     }
-    
+
     // clase para ver la hora del sistema
     public class Reloj {
+
         Calendar calendario;
-        
+
         // actualiza el label cada milisegundo
         public void mostrarHora() {
             while (true) {
                 String horaSistema = "";
                 calendario = Calendar.getInstance();
-                if (calendario.get(Calendar.HOUR_OF_DAY)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.HOUR_OF_DAY)) + ":";
-                else
+                if (calendario.get(Calendar.HOUR_OF_DAY) < 10) {
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.HOUR_OF_DAY)) + ":";
+                } else {
                     horaSistema += String.valueOf(calendario.get(Calendar.HOUR_OF_DAY)) + ":";
-                if (calendario.get(Calendar.MINUTE)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.MINUTE)) + ":";
-                else
+                }
+                if (calendario.get(Calendar.MINUTE) < 10) {
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.MINUTE)) + ":";
+                } else {
                     horaSistema += String.valueOf(calendario.get(Calendar.MINUTE)) + ":";
-                if (calendario.get(Calendar.SECOND)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.SECOND)) + ":";
-                else
+                }
+                if (calendario.get(Calendar.SECOND) < 10) {
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.SECOND)) + ":";
+                } else {
                     horaSistema += String.valueOf(calendario.get(Calendar.SECOND)) + ":";
+                }
                 horaSistema += String.valueOf(calendario.get(Calendar.MILLISECOND)) + " hrs";
                 lblHoraSistema.setText(horaSistema);
                 try {
@@ -148,14 +188,8 @@ public class frmMain extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         // TODO add your handling code here:
-        try {
-            sw_personaje = buscador.buscarPersonaje();
-            txtPersonaje.setText(sw_personaje.getName());
-        } catch (IOException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        HiloAPI api = new HiloAPI();
+        api.start();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     /**
@@ -191,6 +225,7 @@ public class frmMain extends javax.swing.JFrame {
                 new frmMain().setVisible(true);
             }
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
