@@ -26,6 +26,24 @@ public class frmMain extends javax.swing.JFrame {
         initComponents();
     }
     
+    
+    public class Hilo extends Thread{
+        Personaje stw = new Personaje(); // clase que conecta a la API
+        
+        public Hilo(){
+            stw = new Personaje(); // que el objeto lo reinicie ca\da vez 
+         
+        }
+        
+        @Override
+        public void run(){
+               Personaje personaje = new Personaje();
+                
+               // personaje = stw.setName(txtPersonajeActionPerformed.getText());
+        }
+        
+    }
+    
     // clase para ver la hora del sistema
     public class Reloj {
         Calendar calendario;
@@ -90,6 +108,11 @@ public class frmMain extends javax.swing.JFrame {
 
         txtPersonaje.setEditable(false);
         txtPersonaje.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtPersonaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPersonajeActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Datos de tu personaje:");
 
@@ -102,15 +125,13 @@ public class frmMain extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtPersonaje, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel3)))
+                            .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -148,6 +169,10 @@ public class frmMain extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         // TODO add your handling code here:
+        
+        Hilo miHilo = new Hilo();
+        miHilo.start();
+        
         try {
             sw_personaje = buscador.buscarPersonaje();
             txtPersonaje.setText(sw_personaje.getName());
@@ -157,6 +182,10 @@ public class frmMain extends javax.swing.JFrame {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnIniciarActionPerformed
+
+    private void txtPersonajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPersonajeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPersonajeActionPerformed
 
     /**
      * @param args the command line arguments
