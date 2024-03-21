@@ -6,7 +6,10 @@ package main;
 
 import classes.*;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,16 +18,50 @@ import java.util.logging.Logger;
  * @author Miguel Matul <https://github.com/MigueMat4>
  */
 public class frmMain extends javax.swing.JFrame {
-    
+    Calendar calendario;
     Personaje sw_personaje; // personaje que se descargará de la API
     ConectorAPI buscador = new ConectorAPI(); // clase que conecta a la API
     
     /**
      * Creates new form frmMain
      */
+    
     public frmMain() {
         initComponents();
     }
+    // Hilo
+    public class Hilo extends Thread {
+        Hilo hilo = new Hilo();
+        
+        public Hilo(){
+            hilo = new Hilo();
+        }
+        public void mostrarHora() {
+            while (true) {
+                String horaSistema = "";
+                calendario = Calendar.getInstance();
+                if (calendario.get(Calendar.HOUR_OF_DAY)<10)
+                    horaSistema += String.valueOf("0"+calendario.get(Calendar.HOUR_OF_DAY)) + ":";
+                else
+                    horaSistema += String.valueOf(calendario.get(Calendar.HOUR_OF_DAY)) + ":";
+                if (calendario.get(Calendar.MINUTE)<10)
+                    horaSistema += String.valueOf("0"+calendario.get(Calendar.MINUTE)) + ":";
+                else
+                    horaSistema += String.valueOf(calendario.get(Calendar.MINUTE)) + ":";
+                if (calendario.get(Calendar.SECOND)<10)
+                    horaSistema += String.valueOf("0"+calendario.get(Calendar.SECOND)) + ":";
+                else
+                    horaSistema += String.valueOf(calendario.get(Calendar.SECOND)) + ":";
+                horaSistema += String.valueOf(calendario.get(Calendar.MILLISECOND)) + " hrs";
+                lblHoraSistema.setText(horaSistema);
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+       
     
     // clase para ver la hora del sistema
     public class Reloj {
