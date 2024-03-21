@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package main;
 
 import classes.*;
@@ -9,6 +5,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
+import javax.swing.JLabel;
 
 /**
  *
@@ -26,29 +24,65 @@ public class frmMain extends javax.swing.JFrame {
         initComponents();
     }
     
-    // clase para ver la hora del sistema
+    public class Hilo2 extends Thread {
+        ConectorAPI conexion = new ConectorAPI();
+        
+        public Hilo2() {
+            conexion = new ConectorAPI();
+        }
+        
+        @Override
+        public void run() {
+            ConectorAPI conexion = new ConectorAPI();
+            
+            conexion = conexion.buscarPersonaje(btnIniciar);
+        }
+    }
+    
+    public class Hilo1 extends Thread {
+
+    private final JLabel label; // Referencia al JLabel en el formulario principal
+
+    // Constructor para inicializar el JLabel
+    public Hilo1(JLabel label) {
+        this.label = label;
+    }
+
+    // Método run para el hilo
+    @Override
+    public void run() {
+        Reloj reloj = new Reloj();
+        reloj.mostrarHora();
+    }
+
+    // Clase para ver la hora del sistema
     public class Reloj {
         Calendar calendario;
-        
-        // actualiza el label cada milisegundo
+
+        // Método para mostrar la hora del sistema
         public void mostrarHora() {
             while (true) {
                 String horaSistema = "";
                 calendario = Calendar.getInstance();
-                if (calendario.get(Calendar.HOUR_OF_DAY)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.HOUR_OF_DAY)) + ":";
+                if (calendario.get(Calendar.HOUR_OF_DAY) < 10)
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.HOUR_OF_DAY)) + ":";
                 else
                     horaSistema += String.valueOf(calendario.get(Calendar.HOUR_OF_DAY)) + ":";
-                if (calendario.get(Calendar.MINUTE)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.MINUTE)) + ":";
+                if (calendario.get(Calendar.MINUTE) < 10)
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.MINUTE)) + ":";
                 else
                     horaSistema += String.valueOf(calendario.get(Calendar.MINUTE)) + ":";
-                if (calendario.get(Calendar.SECOND)<10)
-                    horaSistema += String.valueOf("0"+calendario.get(Calendar.SECOND)) + ":";
+                if (calendario.get(Calendar.SECOND) < 10)
+                    horaSistema += String.valueOf("0" + calendario.get(Calendar.SECOND)) + ":";
                 else
                     horaSistema += String.valueOf(calendario.get(Calendar.SECOND)) + ":";
                 horaSistema += String.valueOf(calendario.get(Calendar.MILLISECOND)) + " hrs";
-                lblHoraSistema.setText(horaSistema);
+
+                final String finalHoraSistema = horaSistema; // Hacer la variable final o efectivamente final
+
+                // Actualiza el JLabel en el hilo de interfaz de usuario (Event Dispatch Thread)
+                SwingUtilities.invokeLater(() -> label.setText(finalHoraSistema));
+
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
@@ -57,6 +91,9 @@ public class frmMain extends javax.swing.JFrame {
             }
         }
     }
+}
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -102,15 +139,13 @@ public class frmMain extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtPersonaje, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel3)))
+                            .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -156,6 +191,8 @@ public class frmMain extends javax.swing.JFrame {
         } catch (InterruptedException ex) {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Hilo1 miHilo1 = new Hilo1(lblHoraSistema);
+        miHilo1.run();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     /**
