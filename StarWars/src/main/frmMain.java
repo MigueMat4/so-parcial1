@@ -17,21 +17,43 @@ import java.util.logging.Logger;
 public class frmMain extends javax.swing.JFrame {
     
     Personaje sw_personaje; // personaje que se descargará de la API
-    ConectorAPI buscador = new ConectorAPI(); // clase que conecta a la API
+    Reloj relojSistema = new Reloj(); // objeto que muestra la hora del sistema a razón de 1 ms
+    Yoda grogu;
     
     /**
      * Creates new form frmMain
      */
     public frmMain() {
         initComponents();
+        relojSistema.start();
+    }
+    
+    public class Yoda extends Thread {
+        private final ConectorAPI buscador = new ConectorAPI(); // clase que conecta a la API
+
+        public Yoda() {
+        }
+        
+        @Override
+        public void run() {
+            try {
+                sw_personaje = buscador.buscarPersonaje();
+                txtPersonaje.setText(sw_personaje.getName());
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     // clase para ver la hora del sistema
-    public class Reloj {
+    public class Reloj extends Thread {
         Calendar calendario;
         
         // actualiza el label cada milisegundo
-        public void mostrarHora() {
+        @Override
+        public void run() {
             while (true) {
                 String horaSistema = "";
                 calendario = Calendar.getInstance();
@@ -148,14 +170,8 @@ public class frmMain extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         // TODO add your handling code here:
-        try {
-            sw_personaje = buscador.buscarPersonaje();
-            txtPersonaje.setText(sw_personaje.getName());
-        } catch (IOException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        grogu = new Yoda();
+        grogu.start();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     /**
