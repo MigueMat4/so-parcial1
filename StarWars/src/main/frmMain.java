@@ -36,6 +36,7 @@ public class frmMain extends javax.swing.JFrame {
         
         @Override
         public void run() {
+            btnIniciar.setEnabled(false);
             try {
                 sw_personaje = buscador.buscarPersonaje();
                 txtPersonaje.setText(sw_personaje.getName());
@@ -44,6 +45,7 @@ public class frmMain extends javax.swing.JFrame {
             } catch (InterruptedException ex) {
                 Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
+            btnIniciar.setEnabled(true);
         }
     }
     
